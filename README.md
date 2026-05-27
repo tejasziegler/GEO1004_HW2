@@ -9,10 +9,10 @@
     ├── include/               Public headers — declarations of each module
     │   ├── json.hpp           nlohmann::json (third-party, untouched)
     │   ├── io.h               CityJSON read/write
-    |   ├── lod_filter.h         LoD2.2 filtering
-    │   ├── triangulate.h      Surface triangulation via PCA + CDT
-    │   ├── volume.h           Per-building volume (signed tetrahedra)
-    │   └── roof_area.h             Per-building RoofSurface area
+    |   ├── lod_filter.h       LoD2.2 filtering
+    │   ├── triangulate.h      Surface triangulation via PCA
+    │   ├── volume.h           Per-building volume (signed tetrahedra-sum)
+    │   └── roof_area.h        Per-building RoofSurface area
     └── src/                   ~Implementations~
         ├── main.cpp           orchestrates the pipeline
         ├── io.cpp
