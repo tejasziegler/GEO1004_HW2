@@ -24,7 +24,7 @@
 ```
 
 ```mermaid
-flowchart TD
+flowchart LR
     A["INPUT (.city.json) \n LoD: 1.2, 1.3, 2.2 "]
     B["IO  (nlohmann::json) \n read file "]
     C["LOD_FILTER (nlohmann::json) \n remove LoD 1.2, 1.3 and merge"]
