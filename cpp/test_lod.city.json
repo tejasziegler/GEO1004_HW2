@@ -1,0 +1,515 @@
+{
+  "type": "CityJSON",
+  "version": "2.0",
+  "CityObjects": {
+    "Building_A": {
+      "type": "Building",
+      "attributes": {
+        "name": "Test building A"
+      },
+      "children": [
+        "BuildingPart_A_1",
+        "BuildingPart_A_2"
+      ],
+      "geometry": [
+        {
+          "type": "Solid",
+          "lod": "0",
+          "boundaries": [
+            [
+              [
+                [
+                  0,
+                  1,
+                  2,
+                  3
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "BuildingPart_A_1": {
+      "type": "BuildingPart",
+      "parents": [
+        "Building_A"
+      ],
+      "geometry": [
+        {
+          "type": "Solid",
+          "lod": "1.2",
+          "boundaries": [
+            [
+              [
+                [
+                  0,
+                  1,
+                  2,
+                  3
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "Solid",
+          "lod": "1.3",
+          "boundaries": [
+            [
+              [
+                [
+                  0,
+                  1,
+                  5,
+                  4
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "Solid",
+          "lod": "2.2",
+          "boundaries": [
+            [
+              [
+                [
+                  0,
+                  1,
+                  2,
+                  3
+                ]
+              ],
+              [
+                [
+                  4,
+                  7,
+                  6,
+                  5
+                ]
+              ],
+              [
+                [
+                  0,
+                  4,
+                  5,
+                  1
+                ]
+              ],
+              [
+                [
+                  1,
+                  5,
+                  6,
+                  2
+                ]
+              ],
+              [
+                [
+                  2,
+                  6,
+                  7,
+                  3
+                ]
+              ],
+              [
+                [
+                  3,
+                  7,
+                  4,
+                  0
+                ]
+              ]
+            ]
+          ],
+          "semantics": {
+            "surfaces": [
+              {
+                "type": "GroundSurface"
+              },
+              {
+                "type": "RoofSurface"
+              },
+              {
+                "type": "WallSurface"
+              }
+            ],
+            "values": [
+              [
+                0,
+                1,
+                2,
+                2,
+                2,
+                2
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "BuildingPart_A_2": {
+      "type": "BuildingPart",
+      "parents": [
+        "Building_A"
+      ],
+      "geometry": [
+        {
+          "type": "Solid",
+          "lod": "1.2",
+          "boundaries": [
+            [
+              [
+                [
+                  8,
+                  9,
+                  10,
+                  11
+                ]
+              ]
+            ]
+          ]
+        },
+        {
+          "type": "Solid",
+          "lod": "2.2",
+          "boundaries": [
+            [
+              [
+                [
+                  8,
+                  9,
+                  10,
+                  11
+                ]
+              ],
+              [
+                [
+                  12,
+                  15,
+                  14,
+                  13
+                ]
+              ],
+              [
+                [
+                  8,
+                  12,
+                  13,
+                  9
+                ]
+              ],
+              [
+                [
+                  9,
+                  13,
+                  14,
+                  10
+                ]
+              ],
+              [
+                [
+                  10,
+                  14,
+                  15,
+                  11
+                ]
+              ],
+              [
+                [
+                  11,
+                  15,
+                  12,
+                  8
+                ]
+              ]
+            ]
+          ],
+          "semantics": {
+            "surfaces": [
+              {
+                "type": "GroundSurface"
+              },
+              {
+                "type": "RoofSurface"
+              },
+              {
+                "type": "WallSurface"
+              }
+            ],
+            "values": [
+              [
+                0,
+                1,
+                2,
+                2,
+                2,
+                2
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "Building_B": {
+      "type": "Building",
+      "attributes": {
+        "name": "Test building B"
+      },
+      "children": [
+        "BuildingPart_B_1"
+      ],
+      "geometry": [
+        {
+          "type": "Solid",
+          "lod": "0",
+          "boundaries": [
+            [
+              [
+                [
+                  16,
+                  17,
+                  18,
+                  19
+                ]
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "BuildingPart_B_1": {
+      "type": "BuildingPart",
+      "parents": [
+        "Building_B"
+      ],
+      "geometry": [
+        {
+          "type": "Solid",
+          "lod": "2.2",
+          "boundaries": [
+            [
+              [
+                [
+                  16,
+                  17,
+                  18,
+                  19
+                ]
+              ],
+              [
+                [
+                  20,
+                  23,
+                  22,
+                  21
+                ]
+              ],
+              [
+                [
+                  16,
+                  20,
+                  21,
+                  17
+                ]
+              ],
+              [
+                [
+                  17,
+                  21,
+                  22,
+                  18
+                ]
+              ],
+              [
+                [
+                  18,
+                  22,
+                  23,
+                  19
+                ]
+              ],
+              [
+                [
+                  19,
+                  23,
+                  20,
+                  16
+                ]
+              ]
+            ]
+          ],
+          "semantics": {
+            "surfaces": [
+              {
+                "type": "GroundSurface"
+              },
+              {
+                "type": "RoofSurface"
+              },
+              {
+                "type": "WallSurface"
+              }
+            ],
+            "values": [
+              [
+                0,
+                1,
+                2,
+                2,
+                2,
+                2
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "vertices": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      10,
+      0,
+      0
+    ],
+    [
+      10,
+      10,
+      0
+    ],
+    [
+      0,
+      10,
+      0
+    ],
+    [
+      0,
+      0,
+      10
+    ],
+    [
+      10,
+      0,
+      10
+    ],
+    [
+      10,
+      10,
+      10
+    ],
+    [
+      0,
+      10,
+      10
+    ],
+    [
+      20,
+      0,
+      0
+    ],
+    [
+      30,
+      0,
+      0
+    ],
+    [
+      30,
+      10,
+      0
+    ],
+    [
+      20,
+      10,
+      0
+    ],
+    [
+      20,
+      0,
+      8
+    ],
+    [
+      30,
+      0,
+      8
+    ],
+    [
+      30,
+      10,
+      8
+    ],
+    [
+      20,
+      10,
+      8
+    ],
+    [
+      0,
+      20,
+      0
+    ],
+    [
+      10,
+      20,
+      0
+    ],
+    [
+      10,
+      30,
+      0
+    ],
+    [
+      0,
+      30,
+      0
+    ],
+    [
+      0,
+      20,
+      6
+    ],
+    [
+      10,
+      20,
+      6
+    ],
+    [
+      10,
+      30,
+      6
+    ],
+    [
+      0,
+      30,
+      6
+    ]
+  ],
+  "transform": {
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "translate": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "metadata": {
+    "geographicalExtent": [
+      0,
+      0,
+      0,
+      30,
+      30,
+      10
+    ],
+    "referenceSystem": "https://www.opengis.net/def/crs/EPSG/0/7415"
+  }
+}
