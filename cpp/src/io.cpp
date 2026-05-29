@@ -1,26 +1,53 @@
-#include "io.h"     // (catches mistakes where the header doesn't declare what the .cpp defines)
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <string>
 
+#include "io.h"
 #include "json.hpp"
 
-nlohmann:: json read_cityjson(const std::string& filename) {
-    std::ifstream input(filename);
-    if (!input.is_open()) {
-        throw std::runtime_error("Could not open file " + filename);
-    }
-    nlohmann:: json j;          // empty JSON object
-    input >> j;
-    return j;
+bool read_cityjson(const std::string& filename, json& j) {
+  std::ifstream input(filename);
+  if (!input.is_open()) {
+    std::cerr << "Error: cannot open " << filename << std::endl;
+    return false;
+  }
+
+  input >> j;
+  return true;
 }
 
-void write_cityjson(const nlohmann::json& j, const std::string& filename) {
-    std::ofstream out(filename);    // overwrite/create file for writing
-    if (!out.is_open()) {
-        throw std::runtime_error("Cannot write output file: " + filename);
-    }
-    out << j.dump(2) << std::endl;  // dump(2) = serialise to string with 2-space indentation
+bool write_cityjson(const std::string& filename, const json& j) {
+  std::ofstream output(filename);
+  if (!output.is_open()) {
+    std::cerr << "Error: cannot write " << filename << std::endl;
+    return false;
+  }
 
-    std::cout << "Written to: " << filename << std::endl;
+  output << j.dump(2) << std::endl;
+  return true;
 }
 
+std::string make_output_filename(const std::string& input_filename) {
+  std::string output_filename = input_filename;
+  const std::string suffix = ".city.json";
+  const size_t pos = output_filename.rfind(suffix);
+
+  if (pos == std::string::npos) {
+    return "out.city.json";
+  }
+
+  output_filename.insert(pos, "_out");
+  return output_filename;
+}
+
+void print_model_summary(const json& j) {
+  int buildings = 0;
+  for (const auto& co : j["CityObjects"]) {
+    if (co["type"] == "Building") {
+      buildings += 1;
+    }
+  }
+
+  std::cout << "Buildings: " << buildings << std::endl;
+  std::cout << "Vertices: " << j["vertices"].size() << std::endl;
+}
