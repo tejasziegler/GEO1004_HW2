@@ -26,8 +26,8 @@ using json = nlohmann::json;
 #include "io.h"                 // print_model_summary
 #include "lod_filter.h"         // keep_lod22_and_merge_to_buildings()
 #include "triangulate.h"        // triangulate_surfaces()
-#include "roof_area.h"          // add_building_volumes()
-#include "volume.h"             // add_total_roof_areas()
+#include "roof_area.h"          // add_total_roof_areas()
+#include "volume.h"             // add_building_volumes()
 
 // declare helper functions (defined below)
 int   get_no_roof_surfaces(const json& j);
