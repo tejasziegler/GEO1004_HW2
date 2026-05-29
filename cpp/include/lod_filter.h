@@ -1,6 +1,4 @@
-//
-// Created by Tejas Ziegler on 27/05/2026.
-//
+
 
 #ifndef GEO1004_HW2_LOD_FILTER_H
 #define GEO1004_HW2_LOD_FILTER_H
