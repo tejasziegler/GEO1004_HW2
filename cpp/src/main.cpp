@@ -24,10 +24,10 @@ using json = nlohmann::json;
 
 //-- include our own functions
 #include "io.h"                 // ?
-#include "lod_filter.h"         // filter_to_lod22()
+#include "lod_filter.h"         // keep_lod22_and_merge_to_buildings()
 #include "triangulate.h"        // triangulate_surfaces()
-#include "roof_area.h"          // compute_volume()
-#include "volume.h"             // compute_roof_area()
+#include "roof_area.h"          // add_building_volumes()
+#include "volume.h"             // add_total_roof_areas()
 
 // declare helper functions (defined below)
 int   get_no_roof_surfaces(const json& j);
@@ -75,12 +75,18 @@ std::cout << "File read successfully." << std::endl;
   // =====================================================================
 
   std::cout << "\n=== Step 1: Filter to LoD2.2 ===" << std::endl;
-  filter_to_lod22(j);                             // modifies `j` in place
+  keep_lod22_and_merge_to_buildings(j);           // modifies `j` in place
 
   std::cout << "\n=== Step 2: Triangulate surfaces ===" << std::endl;
   triangulate_surfaces(j);                        // modifies `j` in place
 
   std::cout << "\n=== Step 3: Per-Building attributes ===" << std::endl;
+
+  // OPTION A ??
+  add_building_volumes(json& j);
+  add_total_roof_areas(json& j);
+
+  // OPTION B ??
   std::srand(std::time(nullptr));                 // (legacy: was used for rand() placeholder)
   for (auto& co : j["CityObjects"].items()) {     // .items() gives (key, value) pairs
     if (co.value()["type"] != "Building") continue;   // skip BuildingPart, etc.
@@ -88,8 +94,8 @@ std::cout << "File read successfully." << std::endl;
     const std::string& building_id = co.key();    // the CityObject's ID string
 
     //-- compute the two attributes by calling our (stub) functions
-    double volume    = compute_volume(j, building_id);
-    double roof_area = compute_roof_area(j, building_id);
+    double volume    = add_building_volumes(j, building_id);
+    double roof_area = add_total_roof_areas(j, building_id);
 
     //-- write attributes with the exact names required by the assignment brief
     co.value()["attributes"]["geo1004_volume"]           = volume;
