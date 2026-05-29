@@ -1,6 +1,6 @@
+#pragma once
+#include "json.hpp"
 
-
-#ifndef GEO1004_HW2_TRIANGULATE_H
-#define GEO1004_HW2_TRIANGULATE_H
-
-#endif //GEO1004_HW2_TRIANGULATE_H
+// Triangulates every surface of every Building's LoD2.2 geometry,
+// updating boundaries and semantic surfaces consistently. Modifies `j` in place.
+void triangulate_surfaces(nlohmann::json& j);

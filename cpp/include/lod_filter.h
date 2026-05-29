@@ -1,6 +1,7 @@
+#pragma once
+#include "json.hpp"
 
-
-#ifndef GEO1004_HW2_LOD_FILTER_H
-#define GEO1004_HW2_LOD_FILTER_H
-
-#endif //GEO1004_HW2_LOD_FILTER_H
+// Keeps only the LoD2.2 geometry: removes LoD1.2 and LoD1.3, moves the
+// LoD2.2 geometry from each BuildingPart into its parent Building, and
+// deletes the BuildingPart. Modifies `j` in place.
+void keep_lod22_and_merge_to_buildings(nlohmann::json& j);

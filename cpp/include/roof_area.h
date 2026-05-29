@@ -1,8 +1,6 @@
-//
-// Created by Tejas Ziegler on 27/05/2026.
-//
+#pragma once
+#include "json.hpp"
 
-#ifndef GEO1004_HW2_ROOF_AREA_H
-#define GEO1004_HW2_ROOF_AREA_H
-
-#endif //GEO1004_HW2_ROOF_AREA_H
+// Computes the total RoofSurface area of each Building and stores it as the
+// attribute "geo1004_total_roof_area". Modifies `j` in place.
+void add_total_roof_areas(nlohmann::json& j);

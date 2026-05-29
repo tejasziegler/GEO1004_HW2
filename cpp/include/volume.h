@@ -1,8 +1,6 @@
-//
-// Created by Tejas Ziegler on 27/05/2026.
-//
+#pragma once
+#include "json.hpp"
 
-#ifndef GEO1004_HW2_VOLUME_H
-#define GEO1004_HW2_VOLUME_H
-
-#endif //GEO1004_HW2_VOLUME_H
+// Computes the volume of each Building's LoD2.2 geometry (signed-tetrahedra
+// method) and stores it as the attribute "geo1004_volume". Modifies `j` in place.
+void add_building_volumes(nlohmann::json& j);

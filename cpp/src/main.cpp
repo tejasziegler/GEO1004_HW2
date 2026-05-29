@@ -23,7 +23,7 @@
 using json = nlohmann::json;
 
 //-- include our own functions
-#include "io.h"                 // ?
+#include "io.h"                 // print_model_summary
 #include "lod_filter.h"         // keep_lod22_and_merge_to_buildings()
 #include "triangulate.h"        // triangulate_surfaces()
 #include "roof_area.h"          // add_building_volumes()
@@ -37,7 +37,7 @@ void  visit_roofsurfaces(const json& j);
 
 int main(int argc, const char * argv[]) {
   //-- will read the file passed as argument or twobuildings.city.json if nothing is passed
-  const char* filename = (argc > 1) ? argv[1] : "../../data/nextbk_2b.city.json";
+  const char* filename = (argc > 1) ? argv[1] : "/Users/tejasziegler/Documents/GEOMATICS/GEO1004_3D-model/Assignment 2/GEO1004_HW2/data/9-284-556.city.json";
   std::cout << "Processing: " << filename << std::endl;
 
   std::ifstream input(filename);            // open the input file for reading
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
   input >> j;                               // parse the file's text into 'j'
   input.close();                            // explicitly close
 
-std::cout << "File read successfully." << std::endl;
+  std::cout << "File read successfully." << std::endl;
 
   //-- get total number of RoofSurface in the file
   int noroofsurfaces = get_no_roof_surfaces(j);
@@ -83,33 +83,30 @@ std::cout << "File read successfully." << std::endl;
   triangulate_surfaces(j);                        // modifies `j` in place
 
   std::cout << "\n=== Step 3: Per-Building attributes ===" << std::endl;
+  add_building_volumes(j);
+  add_total_roof_areas(j);
 
-  // OPTION A ??
-  add_building_volumes(json& j);
-  add_total_roof_areas(json& j);
-
-  // OPTION B ??
-  std::srand(std::time(nullptr));                 // (legacy: was used for rand() placeholder)
-  for (auto& co : j["CityObjects"].items()) {     // .items() gives (key, value) pairs
-    if (co.value()["type"] != "Building") continue;   // skip BuildingPart, etc.
-
-    const std::string& building_id = co.key();    // the CityObject's ID string
-
-    //-- compute the two attributes by calling our (stub) functions
-    double volume    = add_building_volumes(j, building_id);
-    double roof_area = add_total_roof_areas(j, building_id);
-
-    //-- write attributes with the exact names required by the assignment brief
-    co.value()["attributes"]["geo1004_volume"]           = volume;
-    co.value()["attributes"]["geo1004_total_roof_area"]  = roof_area;
-
-    //-- flag the (currently expected) sentinel returns from stubs so we see them clearly
-    if (volume < 0 || roof_area < 0) {
-      std::cerr << "  [warn] Building " << building_id
-                << " — stub returned (volume=" << volume
-                << ", roof_area=" << roof_area << ")" << std::endl;
-    }
-  }
+  // // KEEPING THIS DEPENDING ON DAMAN's IMPLEMENTATION OF VOLUME AND AREAS!
+  // std::srand(std::time(nullptr));                 // (legacy: was used for rand() placeholder)
+  // for (auto& co : j["CityObjects"].items()) {     // .items() gives (key, value) pairs
+  //   if (co.value()["type"] != "Building") continue;   // skip BuildingPart, etc.
+  //
+  //   const std::string& building_id = co.key();    // the CityObject's ID string
+  //
+  //   //-- compute the two attributes by calling our (stub) functions
+  //   double volume    = add_building_volumes(j, building_id);
+  //   double roof_area = add_total_roof_areas(j, building_id);
+  //
+  //   //-- write attributes with the exact names required by the assignment brief
+  //   co.value()["attributes"]["geo1004_volume"]           = volume;
+  //   co.value()["attributes"]["geo1004_total_roof_area"]  = roof_area;
+  //
+  //   //-- flag the (currently expected) sentinel returns from stubs so we see them clearly
+  //   if (volume < 0 || roof_area < 0) {
+  //     std::cerr << "  [warn] Building " << building_id
+  //               << " — stub returned (volume=" << volume
+  //               << ", roof_area=" << roof_area << ")" << std::endl;
+  //   }
 
 
 

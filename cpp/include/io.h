@@ -1,6 +1,6 @@
 #pragma once
+#include "json.hpp"
 
-#ifndef GEO1004_HW2_IO_H
-#define GEO1004_HW2_IO_H
-
-#endif //GEO1004_HW2_IO_H
+// Prints summary statistics about the model (number of CityObjects,
+// Buildings, vertices, RoofSurfaces) to standard output. Read-only.
+void print_model_summary(const nlohmann::json& j);

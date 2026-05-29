@@ -4,6 +4,7 @@
 
 #include "io.h"
 #include "json.hpp"
+using json = nlohmann::json;
 
 bool read_cityjson(const std::string& filename, json& j) {
   std::ifstream input(filename);

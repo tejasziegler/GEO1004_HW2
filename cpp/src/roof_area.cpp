@@ -2,6 +2,7 @@
 
 #include "roof_area.h"
 #include "json.hpp"
+using json = nlohmann::json;
 
 void add_total_roof_areas(json& j) {
   // TODO: sum the area of all surfaces whose semantic type is RoofSurface and

@@ -3,6 +3,7 @@
 #include <string>
 #include "json.hpp"
 #include "lod_filter.h"
+using json = nlohmann::json;
 
 void keep_lod22_and_merge_to_buildings(json& j) {
     // TODO: keep only LoD2.2 geometries, move them from BuildingPart objects to their parent Building objects, then remove the BuildingPart objects.
