@@ -62,8 +62,8 @@ int main(int argc, const char * argv[]) {
   int noroofsurfaces = get_no_roof_surfaces(j);
   std::cout << "Total RoofSurface: " << noroofsurfaces << std::endl;
 
-  list_all_vertices(j);     // disable after 1 run to check
-  visit_roofsurfaces(j);    // disable after 1 run to check
+  // list_all_vertices(j);     // disable after 1 run to check
+  // visit_roofsurfaces(j);    // disable after 1 run to check
 
   //-- print out the number of Buildings in the file
   int nobuildings = 0;
