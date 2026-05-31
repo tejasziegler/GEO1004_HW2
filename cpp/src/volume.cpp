@@ -78,15 +78,25 @@ void add_building_volumes(json& j) {
 
           for (auto& face : shell) { // gets inside the surface; face = each ring
             auto& ring = face[0]; // grabs each ring = 3 indices of vertices {there might be holes, but I only care about the main outer shape (the first ring).}
-            Point3D o1 = get_decompressed_point(ring[0].get<int>(), j); // extract coordinates for 3 indices
-            Point3D o2 = get_decompressed_point(ring[1].get<int>(), j);
-            Point3D o3 = get_decompressed_point(ring[2].get<int>(), j);
+            if (ring.size() < 3) continue; // sanity check: a ring must have at least 3 vertices to form a surface
+
+            Point3D o1 = get_decompressed_point(ring[0].get<int>(), j); // pivot point: extract coordinates for 3 indices
+
+            // This loop handles triangles (1 iteration), quads (2), pentagons (3), etc.
+            for (size_t k = 1; k + 1 < ring.size(); k++) {
+            Point3D o2 = get_decompressed_point(ring[k].get<int>(), j);
+            Point3D o3 = get_decompressed_point(ring[k+1].get<int>(), j);
+
             double volume = signed_volume(o1, o2, o3); // using three coords builds volume for ring
             volume_shell += volume;
+            } // triangle loop ends here
+
           } // face loop ends here
+          
           // accumulate all shells of city_object
           if (i == 0) volume_co += volume_shell;
           else volume_co -= volume_shell;
+          
         } // shell loop ends here
         co.value()["attributes"]["geo1004_volume"] = std::abs(volume_co); // save volume to city_object attribute
       }
