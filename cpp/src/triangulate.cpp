@@ -367,6 +367,5 @@ void triangulate_surfaces(json& j) {
 std::cout << "Original surfaces: " << original_surfaces << std::endl;
 std::cout << "Created triangle surfaces: " << created_triangles << std::endl;
 std::cout << "Kept original surfaces: " << kept_original_surfaces << std::endl;
-
-// std::cout << "Triangulation: TODO" << std::endl;
+std::cout << "=== Successfully Triangulated ===" << std::endl;
 }

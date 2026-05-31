@@ -82,7 +82,9 @@ int main(int argc, const char * argv[]) {
   keep_lod22_and_merge_to_buildings(j);           // modifies `j` in place
 
   std::cout << "\n=== Step 2: Triangulate surfaces ===" << std::endl;
-  triangulate_surfaces(j);                        // modifies `j` in place
+  triangulate_surfaces(j);            // modifies `j` in place
+  print_triangle_stats(j);
+  check_semantic_lengths(j);
 
   std::cout << "\n=== Step 3: Per-Building attributes ===" << std::endl;
   add_building_volumes(j);
