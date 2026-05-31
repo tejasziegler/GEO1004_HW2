@@ -11,9 +11,19 @@ void keep_lod22_and_merge_to_buildings(json& j) {
     json& co = item.value();
 
     if (co.contains("type") && co["type"] == "Building") {
-      json new_geometries = json::array();
+      json new_geometries = json::array(); // creates a new empty array
 
-      if (co.contains("children")) {
+      // keep existing LoD 2.2 geometry from the Building itself
+      if (co.contains("geometry")) {
+        for (const auto& geom : co["geometry"]) {
+          if (geom.contains("lod") && geom["lod"] == "2.2") {
+            new_geometries.push_back(geom);
+          }
+        }
+      }
+
+      // looks at the geometry of the children, and stores it, but never stores of the geometry is stored in itself the building
+      if (co.contains("children")) { 
         for (const auto& child_id_json : co["children"]) {
           std::string child_id = child_id_json.get<std::string>();
 
