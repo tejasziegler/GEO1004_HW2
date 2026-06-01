@@ -132,10 +132,10 @@ void add_building_volumes(json& j) {
     // correct and eliminates floating-point residuals (e.g. -0.0000001).
     // Save volume to city_object attribute.
     //debug:
-    if (std::abs(volume_co) > 100000) {  // flag suspiciously large buildings
-      std::cout << "Large volume building: " << co.key() 
-                << " volume=" << std::abs(volume_co) << std::endl;
-    }
+    // if (std::abs(volume_co) > 100000) {  // flag suspiciously large buildings
+    //   std::cout << "Large volume building: " << co.key() 
+    //             << " volume=" << std::abs(volume_co) << std::endl;
+    // }
     co.value()["attributes"]["geo1004_volume"] = std::abs(volume_co);
 
   } // CityObject loop ends here
