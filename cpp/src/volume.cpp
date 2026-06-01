@@ -59,7 +59,6 @@ void add_building_volumes(json& j) {
 
   // 'for' loop over all objects for cityJSON, 'auto' helps c++ to detect the data type and "&" lets c++ to deal with existing data and not to create a copy that might be slow
   // 'co' for each turn of loop, this represents one specific object. 'co.key()' will get the ID suchas "UUID_123". and building geometry with 'co.value()'.
-  std::cout << "=== Volume Calculation ===" << std::endl;
   for (auto& co : j["CityObjects"].items()) {
     double volume_co = 0.0; // variable for the total volume of this city object
 
@@ -104,5 +103,5 @@ void add_building_volumes(json& j) {
     }
     else {std::cout << "Skipping: " << co.key() << " (no geometry)" << std::endl;}
   }
-  std::cout << "=== Volumes Successfully Calculated ===" << std::endl;
+  std::cout << "Volume calculated and added as CityObject attribute: geo1004_volume" << std::endl;
 }
