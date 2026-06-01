@@ -239,7 +239,7 @@ void triangulate_surfaces(json& j) {
 
                   created_triangles += 2;
 
-                  std::cerr << "Fallback triangulated quad surface." << std::endl;
+                  // std::cerr << "Fallback triangulated quad surface." << std::endl;
                   continue;
                 }
 
@@ -380,5 +380,5 @@ void triangulate_surfaces(json& j) {
 std::cout << "Original surfaces: " << original_surfaces << std::endl;
 std::cout << "Created triangle surfaces: " << created_triangles << std::endl;
 std::cout << "Kept original surfaces: " << kept_original_surfaces << std::endl;
-std::cout << "=== Successfully Triangulated ===" << std::endl;
+// std::cout << "=== Successfully Triangulated ===" << std::endl;
 }

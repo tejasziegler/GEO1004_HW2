@@ -1,25 +1,9 @@
-/*
-+------------------------------------------------------------------------------+
-|                                                                              |
-|                                 Hugo Ledoux                                  |
-|                             h.ledoux@tudelft.nl                              |
-|                                  2026-05-10                                  |
-|                                                                              |
-+------------------------------------------------------------------------------+
-*/
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <iomanip>
 #include <cstdlib>
 #include <ctime>
-
-
-
-//-- https://github.com/nlohmann/json
-//-- used to read and write (City)JSON
-#include "json.hpp" //-- it is in the /include/ folder
 
 //-- https://github.com/nlohmann/json
 //-- used to read and write (City)JSON
@@ -28,7 +12,7 @@
 using json = nlohmann::json;
 
 //-- include our own functions
-#include "io.h"                 // print_model_summary
+// #include "io.h"                 // print_model_summary
 #include "lod_filter.h"         // keep_lod22_and_merge_to_buildings()
 #include "triangulate.h"        // triangulate_surfaces()
 #include "roof_area.h"          // add_total_roof_areas()
@@ -44,7 +28,7 @@ void check_semantic_lengths(const json& j);
 
 int main(int argc, const char * argv[]) {
   //-- will read the file passed as argument or twobuildings.city.json if nothing is passed
-  const char* filename = (argc > 1) ? argv[1] : "/Users/tejasziegler/Documents/Claude/Projects/Geomatics development/synthetic_city_7.city.json";
+  const char* filename = (argc > 1) ? argv[1] : "../9-284-556.city.json";
   std::cout << "Processing: " << filename << std::endl;
 
   std::ifstream input(filename);            // open the input file for reading
@@ -77,59 +61,27 @@ int main(int argc, const char * argv[]) {
   //-- print out the number of vertices in the file
   std::cout << "Number of vertices " << j["vertices"].size() << std::endl;
 
-  print_model_summary(j);
+  // print_model_summary(j);
 
   // =====================================================================
   //                          PIPELINE STEPS
   // =====================================================================
 
   std::cout << "\n=== Step 1: Filter to LoD2.2 ===" << std::endl;
+  print_lod_filter_debug_stats(j, "Before LoD filtering:");
   keep_lod22_and_merge_to_buildings(j);           // modifies `j` in place
+  print_lod_filter_debug_stats(j, "After LoD filtering:");
 
-  std::cout << "\n=== Step 2: Triangulate surfaces ===" << std::endl;
+
+  std::cout << "\n=== Step 2: Triangulate Surfaces ===" << std::endl;
   triangulate_surfaces(j);            // modifies `j` in place
   print_triangle_stats(j);
   check_semantic_lengths(j);
 
-  std::cout << "\n=== Step 3: Per-Building attributes ===" << std::endl;
+  std::cout << "\n=== Step 3: Calculate Building Volumes ===" << std::endl;
   add_building_volumes(j);
+  std::cout << "\n=== Step 4: Calculate Total Roof Area ===" << std::endl;
   add_total_roof_areas(j);
-
-  // // KEEPING THIS DEPENDING ON DAMAN's IMPLEMENTATION OF VOLUME AND AREAS!
-  // std::srand(std::time(nullptr));                 // (legacy: was used for rand() placeholder)
-  // for (auto& co : j["CityObjects"].items()) {     // .items() gives (key, value) pairs
-  //   if (co.value()["type"] != "Building") continue;   // skip BuildingPart, etc.
-  //
-  //   const std::string& building_id = co.key();    // the CityObject's ID string
-  //
-  //   //-- compute the two attributes by calling our (stub) functions
-  //   double volume    = add_building_volumes(j, building_id);
-  //   double roof_area = add_total_roof_areas(j, building_id);
-  //
-  //   //-- write attributes with the exact names required by the assignment brief
-  //   co.value()["attributes"]["geo1004_volume"]           = volume;
-  //   co.value()["attributes"]["geo1004_total_roof_area"]  = roof_area;
-  //
-  //   //-- flag the (currently expected) sentinel returns from stubs so we see them clearly
-  //   if (volume < 0 || roof_area < 0) {
-  //     std::cerr << "  [warn] Building " << building_id
-  //               << " — stub returned (volume=" << volume
-  //               << ", roof_area=" << roof_area << ")" << std::endl;
-  //   }
-
-
-
-  // std::srand(std::time(nullptr));       // what is this?
-  //
-  // //-- add an attribute "volume"
-  // for (auto& co : j["CityObjects"]) {
-  //   if (co["type"] == "Building") {
-  //     co["attributes"]["volume"] = rand();
-  //   }
-  // }
-
-
-
 
   //-- write to disk the modified city model (insert "_out" before ".city.json")
   std::string outfile = filename;
@@ -193,7 +145,6 @@ int get_no_roof_surfaces(const json& j) {
   }
   return total;
 }
-
 
 // CityJSON files have their vertices compressed: https://www.cityjson.org/specs/1.1.1/#transform-object
 // this function visits all the surfaces and print the (x,y,z) coordinates of each vertex encountered
@@ -310,7 +261,7 @@ void print_triangle_stats(const json& j) {
     }
   }
 
-  std::cout << "=== Triangulation Stats ===" << std::endl;
+  std::cout << "\nTriangulation Stats:" << std::endl;
   std::cout << "Surfaces after triangulation: " << surfaces << std::endl;
   std::cout << "Triangle surfaces: " << triangles << std::endl;
   std::cout << "Non-triangle surfaces: " << non_triangles << std::endl;
@@ -352,14 +303,11 @@ void print_lod_filter_debug_stats(const json& j, const std::string& label) {
       building_parts += 1;
     }
   }
-
-
   std::cout << std::endl;
-  std::cout << "=== " << label << " ===" << std::endl;
+  std::cout << label << std::endl;
   std::cout << "Buildings: " << buildings << std::endl;
   std::cout << "BuildingParts: " << building_parts << std::endl;
   std::cout << "LoD2.2 geometries in Buildings: " << lod22_geometries_in_buildings << std::endl;
   std::cout << "Non-LoD2.2 geometries in Buildings: " << non_lod22_geometries_in_buildings << std::endl;
   std::cout << "Buildings still having children: " << buildings_still_having_children << std::endl;
-  std::cout << std::endl;
 }
