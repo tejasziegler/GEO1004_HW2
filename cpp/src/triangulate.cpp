@@ -382,3 +382,99 @@ std::cout << "Created triangle surfaces: " << created_triangles << std::endl;
 std::cout << "Kept original surfaces: " << kept_original_surfaces << std::endl;
 // std::cout << "=== Successfully Triangulated ===" << std::endl;
 }
+
+void print_triangle_stats(const json& j) {
+  int surfaces = 0;
+  int triangles = 0;
+  int non_triangles = 0;
+
+  for (const auto& item : j["CityObjects"].items()) {
+    const std::string building_id = item.key();
+    const json& co = item.value();
+
+    if (!co.contains("type") || co["type"] != "Building") {
+      continue;
+    }
+
+    if (!co.contains("geometry")) {
+      continue;
+    }
+
+    for (size_t geom_id = 0; geom_id < co["geometry"].size(); geom_id++) {
+      const json& geom = co["geometry"][geom_id];
+
+      if (!geom.contains("boundaries")) {
+        continue;
+      }
+
+      for (size_t shell_id = 0; shell_id < geom["boundaries"].size(); shell_id++) {
+        const json& shell = geom["boundaries"][shell_id];
+
+        for (size_t surface_id = 0; surface_id < shell.size(); surface_id++) {
+          const json& surface = shell[surface_id];
+
+          surfaces++;
+
+          bool is_triangle =
+              surface.size() == 1 &&
+              surface[0].is_array() &&
+              surface[0].size() == 3;
+
+          if (is_triangle) {
+            triangles++;
+          } else {
+            non_triangles++;
+
+            std::cout << "Non-triangle surface found:" << std::endl;
+            std::cout << "  Building ID: " << building_id << std::endl;
+            std::cout << "  Geometry ID: " << geom_id << std::endl;
+            std::cout << "  Shell ID: " << shell_id << std::endl;
+            std::cout << "  Surface ID: " << surface_id << std::endl;
+            std::cout << "  Number of rings: " << surface.size() << std::endl;
+
+            for (size_t ring_id = 0; ring_id < surface.size(); ring_id++) {
+              std::cout << "  Ring " << ring_id
+                        << " vertex count: " << surface[ring_id].size()
+                        << std::endl;
+            }
+
+            std::cout << "  Surface JSON: " << surface.dump() << std::endl;
+          }
+        }
+      }
+    }
+  }
+
+  std::cout << "\nTriangulation Stats:" << std::endl;
+  std::cout << "Surfaces after triangulation: " << surfaces << std::endl;
+  std::cout << "Triangle surfaces: " << triangles << std::endl;
+  std::cout << "Non-triangle surfaces: " << non_triangles << std::endl;
+}
+
+
+void check_semantic_lengths(const json& j) {
+  for (const auto& item : j["CityObjects"].items()) {
+    const json& co = item.value();
+
+    if (!co.contains("type") || co["type"] != "Building") {
+      continue;
+    }
+
+    for (const auto& geom : co["geometry"]) {
+      if (!geom.contains("boundaries") || !geom.contains("semantics")) {
+        continue;
+      }
+
+      for (size_t shell_id = 0; shell_id < geom["boundaries"].size(); shell_id++) {
+        size_t n_surfaces = geom["boundaries"][shell_id].size();
+        size_t n_values = geom["semantics"]["values"][shell_id].size();
+
+        if (n_surfaces != n_values) {
+          std::cout << "Semantic mismatch in shell " << shell_id
+                    << ": surfaces=" << n_surfaces
+                    << ", values=" << n_values << std::endl;
+        }
+      }
+    }
+  }
+}

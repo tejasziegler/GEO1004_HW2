@@ -52,3 +52,22 @@ void print_model_summary(const json& j) {
   std::cout << "Buildings: " << buildings << std::endl;
   std::cout << "Vertices: " << j["vertices"].size() << std::endl;
 }
+
+// Returns the number of 'RooSurface' in the CityJSON model
+int get_no_roof_surfaces(const nlohmann::json& j) {
+  int total = 0;
+  for (auto& co : j["CityObjects"].items()) {
+    for (auto& g : co.value()["geometry"]) {
+      if (g["type"] == "Solid") {
+        for (auto& shell : g["semantics"]["values"]) {
+          for (auto& s : shell) {
+            if (g["semantics"]["surfaces"][s.get<int>()]["type"].get<std::string>().compare("RoofSurface") == 0) {
+              total += 1;
+            }
+          }
+        }
+      }
+    }
+  }
+  return total;
+}

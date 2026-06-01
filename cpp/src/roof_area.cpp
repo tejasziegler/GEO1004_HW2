@@ -94,7 +94,7 @@ void add_total_roof_areas(json& j) {
 //   }
 // }
 //
-//
+
 // // Returns the number of 'RooSurface' in the CityJSON model
 // int get_no_roof_surfaces1(const json& j) {
 //   int total = 0;
@@ -113,7 +113,7 @@ void add_total_roof_areas(json& j) {
 //   }
 //   return total;
 // }
-//
+
 //
 // // CityJSON files have their vertices compressed: https://www.cityjson.org/specs/1.1.1/#transform-object
 // // this function visits all the surfaces and print the (x,y,z) coordinates of each vertex encountered
