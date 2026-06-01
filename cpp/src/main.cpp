@@ -44,7 +44,7 @@ void check_semantic_lengths(const json& j);
 
 int main(int argc, const char * argv[]) {
   //-- will read the file passed as argument or twobuildings.city.json if nothing is passed
-  const char* filename = (argc > 1) ? argv[1] : "/Users/tejasziegler/Documents/GEOMATICS/GEO1004_3D-model/Assignment 2/GEO1004_HW2/data/9-284-556.city.json";
+  const char* filename = (argc > 1) ? argv[1] : "/Users/tejasziegler/Documents/Claude/Projects/Geomatics development/synthetic_city_7.city.json";
   std::cout << "Processing: " << filename << std::endl;
 
   std::ifstream input(filename);            // open the input file for reading
