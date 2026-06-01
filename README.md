@@ -1,6 +1,9 @@
 # GEO1004_HW2
 
 ```
+Arda Baysal – 5484987
+Daman Dogra – 6407196
+Tejas Ziegler – 6575498
 .
 ├── report/                    Final report PDF
 ├── data/                      Input tile and its _out output
