@@ -59,6 +59,23 @@ void add_building_volumes(json& j) {
       std::cout << "Skipping: " << co.key() << " (no geometry)" << std::endl;
       continue;
     }
+    // Skip buildings flagged as geometrically invalid by 3DBAG's own validator
+    if (co.value().contains("attributes") && co.value()["attributes"].contains("b3_val3dity_lod22")) {
+        auto& val = co.value()["attributes"]["b3_val3dity_lod22"];
+        
+        // Check if the validation string is NOT "[]"
+        // Since 3DBAG sometimes stores this as a string "[]" instead of an actual array
+        if (val.is_string() && val.get<std::string>() != "[]") {
+            std::cout << ">>> SKIPPING INVALID: " << co.key() << " | Errors: " << val << std::endl;
+            continue;
+        }
+        
+        // Safety: also handle it if it actually IS a real JSON array
+        if (val.is_array() && !val.empty()) {
+            std::cout << ">>> SKIPPING INVALID (Array): " << co.key() << " | Errors: " << val.dump() << std::endl;
+            continue;
+        }
+    }
 
     double volume_co = 0.0; // variable for the total volume of this city object
 
@@ -119,9 +136,6 @@ void add_building_volumes(json& j) {
       std::cout << "Large volume building: " << co.key() 
                 << " volume=" << std::abs(volume_co) << std::endl;
     }
-    co.value()["attributes"]["geo1004_volume"] = std::abs(volume_co);
-
-
     co.value()["attributes"]["geo1004_volume"] = std::abs(volume_co);
 
   } // CityObject loop ends here
