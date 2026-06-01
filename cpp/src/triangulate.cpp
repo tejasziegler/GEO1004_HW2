@@ -95,8 +95,7 @@ double signed_area_triangle_2d(const Point_2& a, const Point_2& b, const Point_2
 }
 
 void triangulate_surfaces(json& j) {
-  // TODO: triangulate each LoD2.2 surface while preserving semantic surface
-  // indices and ring orientation.
+  // Triangulates all LoD2.2 Solid surfaces and preserves semantic values while preserving ring orientation.
   int original_surfaces = 0;
   int created_triangles = 0;
   int kept_original_surfaces = 0;
@@ -105,7 +104,7 @@ void triangulate_surfaces(json& j) {
     if (co.contains("type") && co["type"] == "Building") {
       for (auto& geom: co["geometry"]) {
         if (geom["type"] == "Solid") {
-          // use shell → surface → ring → vertex indices structure
+          // shell → surface → ring → vertex indices structure
           for (size_t shell_id = 0; shell_id < geom["boundaries"].size(); shell_id++) {
             auto& shell = geom["boundaries"][shell_id];
             json new_shell = json::array();
@@ -113,16 +112,8 @@ void triangulate_surfaces(json& j) {
 
             for (size_t surface_id = 0; surface_id < shell.size(); surface_id++) {
               auto& surface = shell[surface_id];
-
               std::string building_id = item.key();
-
-              // std::cout << "Triangulating building: " << building_id
-              //           << ", shell: " << shell_id
-              //           << ", surface: " << surface_id
-              //           << std::endl;
-
               original_surfaces++;
-              //
 
               int sem_value = geom["semantics"]["values"][shell_id][surface_id].get<int>();
 
@@ -142,10 +133,9 @@ void triangulate_surfaces(json& j) {
                   double z = (vi[2] * j["transform"]["scale"][2].get<double>()) + j["transform"]["translate"][2].get<double>();
                   ring_indices.push_back(v_index);
                   ring_points_3d.push_back(Point_3(x,y,z));
-                  // std::cout << std::setprecision(2) << std::fixed << v << " (" << x << ", " << y << ", " << z << ")" << std::endl;
                 }
 
-                // if statement to avoid pushing empty ring.
+                // if to avoid pushing empty ring.
                 if (!ring_indices.empty()) {
                   surface_indices.push_back(ring_indices);
                   surface_points_3d.push_back(ring_points_3d);
@@ -153,7 +143,12 @@ void triangulate_surfaces(json& j) {
               }
               // Checking if surface has a valid outer ring. Can remove later when debugging finishes
               if (surface_points_3d.empty() || surface_points_3d[0].size() < 3) {
-                std::cerr << "Warning: surface has no valid outer ring. Skipping." << std::endl;
+                std::cerr << "Warning: surface has no valid outer ring. Keeping original surface." << std::endl;
+
+                new_shell.push_back(surface);
+                new_semantic_values_for_shell.push_back(sem_value);
+                kept_original_surfaces++;
+
                 continue;
               }
 
@@ -166,7 +161,13 @@ void triangulate_surfaces(json& j) {
               }
 
               if (all_surface_points.size() < 3) {
-                continue; // cannot define a plane
+                std::cerr << "Warning: surface has fewer than 3 total points. Keeping original surface." << std::endl;
+
+                new_shell.push_back(surface);
+                new_semantic_values_for_shell.push_back(sem_value);
+                kept_original_surfaces++;
+
+                continue;
               }
 
               Plane_3 best_plane;
@@ -200,7 +201,7 @@ void triangulate_surfaces(json& j) {
                   }
                 }
 
-                // Remove repeated final point if the ring is explicitly closed
+                // Removing repeated final point if the ring is explicitly closed
                 if (cleaned_ring.size() > 1 && cleaned_ring.front() == cleaned_ring.back()) {
                   cleaned_ring.pop_back();
                 }
@@ -208,7 +209,7 @@ void triangulate_surfaces(json& j) {
                 if (cleaned_ring.size() >= 3) {
                   cleaned_surface_points_2d.push_back(cleaned_ring);
                 } else {
-                  std::cerr << "Warning: ring became invalid after cleaning." << std::endl;
+                  // std::cerr << "Warning: ring became invalid after cleaning." << std::endl;
                 }
               }
 
@@ -242,7 +243,7 @@ void triangulate_surfaces(json& j) {
                   continue;
                 }
 
-                std::cerr << "Warning: surface invalid after ring cleaning. Keeping original surface." << std::endl;
+                // std::cerr << "Warning: surface invalid after ring cleaning. Keeping original surface." << std::endl;
 
                 new_shell.push_back(surface);
                 new_semantic_values_for_shell.push_back(sem_value);
@@ -261,13 +262,6 @@ void triangulate_surfaces(json& j) {
 
                 continue;
               }
-              // for (const auto& ring_points_3d : surface_points_3d) {
-              //   std::vector<Point_2> ring_points_2d;
-              //   for (const auto& p3 : ring_points_3d) {
-              //     ring_points_2d.push_back(best_plane.to_2d(p3));
-              //   }
-              //   surface_points_2d.push_back(ring_points_2d);
-              // }
 
               //Adding the 2d ring points as constraints to the triangulation.
               CDT constrained_dt;
@@ -280,7 +274,7 @@ void triangulate_surfaces(json& j) {
                   const Point_2& p1 = ring_points[i];
                   const Point_2& p2 = ring_points[(i + 1) % ring_points.size()];
 
-                  // Avoid adding zero length edge as constraint
+                  // To avoid adding zero length edge as constraint
                   if (p1 == p2) {
                     std::cerr << "Warning: zero-length constraint skipped." << std::endl;
                     continue;
@@ -288,17 +282,22 @@ void triangulate_surfaces(json& j) {
 
                   constrained_dt.insert_constraint(p1, p2);
                 }
-                // std::cout << "  constraints inserted, vertices: "
-                //   << constrained_dt.number_of_vertices()
-                //   << ", faces: "
-                //   << constrained_dt.number_of_faces()
-                //   << std::endl;
               }
-              // 6. Manually mark inside/outside faces.
-              // std::cout << "  marking domains..." << std::endl;
+
+              // Checking whether the triangulation is usable before marking domains
+              if (constrained_dt.number_of_vertices() < 3 || constrained_dt.number_of_faces() == 0) {
+                std::cerr << "Warning: invalid CDT. Keeping original surface." << std::endl;
+
+                new_shell.push_back(surface);
+                new_semantic_values_for_shell.push_back(sem_value);
+                kept_original_surfaces++;
+
+                continue;
+              }
+              // Manually marking inside/outside faces.
               mark_domains(constrained_dt);
-              // std::cout << "  domains marked." << std::endl;
-              // 7. Extract only interior triangles.
+
+              // Extracting only interior triangles.
               for (auto face = constrained_dt.finite_faces_begin();
                    face != constrained_dt.finite_faces_end();
                    ++face) {
@@ -311,16 +310,6 @@ void triangulate_surfaces(json& j) {
                 Point_2 b = face->vertex(1)->point();
                 Point_2 c = face->vertex(2)->point();
 
-                // Point_3 a3 = best_plane.to_3d(a);
-                // Point_3 b3 = best_plane.to_3d(b);
-                // Point_3 c3 = best_plane.to_3d(c);
-
-                // TODO: convert this interior triangle back to CityJSON vertex indices.
-                // int ia = point_to_index[a];
-                // int ib = point_to_index[b];
-                // int ic = point_to_index[c];
-
-                // Safer version using .find() to give warning
                 auto ita = point_to_index.find(a);
                 auto itb = point_to_index.find(b);
                 auto itc = point_to_index.find(c);
