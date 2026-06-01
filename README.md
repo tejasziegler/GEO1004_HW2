@@ -15,7 +15,10 @@ attributes: enclosed volume (`geo1004_volume`) and total roof area
 ```
 .
 ├── report/                    Final report PDF
-├── data/                      Input tile and processed output
+├── data/
+│   ├── 9-284-556.city.json          Input tile (3DBAG, LoD1.2 + LoD1.3 + LoD2.2)
+│   ├── 9-284-556_out.city.json      Processed output (LoD2.2 only, triangulated, with volume and roof area attributes)
+│   └── generate_synthetic_city.py  Python script to generate synthetic CityJSON cities with analytically known ground truth
 └── cpp/
     ├── CMakeLists.txt         Build configuration
     ├── include/               Module headers
@@ -53,24 +56,44 @@ flowchart LR
     G --> H
 ```
 
+## Synthetic city generation
+
+`data/generate_synthetic_city.py` generates synthetic CityJSON 2.0 cities with analytically known ground truth for volume and roof area. Used to validate the pipeline under ideal conditions (manifold, disjoint geometries). Supports flat box, gabled, hip, and L-shaped buildings.
+
+```bash
+python data/generate_synthetic_city.py -n 20 --seed 7
+python data/generate_synthetic_city.py -n 20 --seed 13
+python data/generate_synthetic_city.py -n 20 --seed 42
+python data/generate_synthetic_city.py -n 20 --seed 69
+```
+
+Output is written to `synthetic_city_<seed>.city.json`.
+
 ## Dependencies
 
-- C++17
+- C++11
 - [CGAL](https://www.cgal.org/)
+- [Eigen3](https://eigen.tuxfamily.org/)
 - [nlohmann/json](https://github.com/nlohmann/json) (included in `include/`)
 
 ## Build
 
 ```bash
+cd cpp
 mkdir build && cd build
 cmake ..
-make
+cmake --build .
 ```
 
 ## Usage
 
 ```bash
-./hw2 <input.city.json>
+.\build\geo1004_hw2.exe <path\to\input.city.json>
 ```
 
-Output is written to `<input>_out.city.json`.
+For example:
+```bash
+.\build\geo1004_hw2.exe data\9-284-556.city.json
+```
+
+The output is written to `<input>_out.city.json` in the same directory as the input file. If no argument is given, the programme defaults to `..\9-284-556.city.json`.
