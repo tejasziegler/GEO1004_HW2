@@ -35,7 +35,12 @@ void add_total_roof_areas(json& j) {
           if (type != "RoofSurface") continue;
           // ======================= Roof surfaces ==================================
           auto& ring = geom["boundaries"][i][k][0];
-          if (ring.size() != 3) continue;
+
+          if (ring.size() != 3) {
+            std::cerr << "Warning: non-triangle RoofSurface ring skipped (size="
+                      << ring.size() << "). Triangulation may be incomplete." << std::endl;
+            continue;
+          }
 
           auto p1 = decompress_vertex(ring[0].get<int>(), j);
           auto p2 = decompress_vertex(ring[1].get<int>(), j);
