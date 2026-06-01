@@ -15,24 +15,27 @@ attributes: enclosed volume (`geo1004_volume`) and total roof area
 ```
 .
 ├── report/                    Final report PDF
+│   ├── 3d_mod_assig2.pdf      
 ├── data/
 │   ├── 9-284-556.city.json          Input tile (3DBAG, LoD1.2 + LoD1.3 + LoD2.2)
 │   ├── 9-284-556_out.city.json      Processed output (LoD2.2 only, triangulated, with volume and roof area attributes)
-│   └── generate_synthetic_city.py  Python script to generate synthetic CityJSON cities with analytically known ground truth
-└── cpp/
-    ├── CMakeLists.txt         Build configuration
-    ├── include/               Module headers
-    │   ├── json.hpp           nlohmann::json (third-party)
-    │   ├── lod_filter.h       LoD2.2 filtering and BuildingPart merging
-    │   ├── triangulate.h      Surface triangulation via CGAL CDT
-    │   ├── volume.h           Per-building volume (signed tetrahedra sum)
-    │   └── roof_area.h        Per-building RoofSurface area
-    └── src/                   Implementations
-        ├── main.cpp           Pipeline orchestration
-        ├── lod_filter.cpp
-        ├── triangulate.cpp
-        ├── volume.cpp
-        └── roof_area.cpp
+│   └── generate_synthetic_city.py  Generates synthetic CityJSON cities with analytically known ground truth
+├── cpp/
+│   ├── CMakeLists.txt         Build configuration
+│   ├── include/               Module headers
+│   │   ├── json.hpp           nlohmann::json (third-party)
+│   │   ├── lod_filter.h       LoD2.2 filtering and BuildingPart merging
+│   │   ├── triangulate.h      Surface triangulation via CGAL CDT
+│   │   ├── volume.h           Per-building volume (signed tetrahedra sum)
+│   │   └── roof_area.h        Per-building RoofSurface area
+│   └── src/                   Implementations
+│       ├── main.cpp           Pipeline orchestration
+│       ├── lod_filter.cpp
+│       ├── triangulate.cpp
+│       ├── volume.cpp
+│       └── roof_area.cpp
+├── .gitignore
+└── README.md
 ```
 
 ## Pipeline
