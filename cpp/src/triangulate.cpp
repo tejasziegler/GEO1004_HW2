@@ -103,7 +103,7 @@ void triangulate_surfaces(json& j) {
     json& co = item.value();
     if (co.contains("type") && co["type"] == "Building") {
       for (auto& geom: co["geometry"]) {
-        if (geom["type"] == "Solid") {
+        if (geom["type"] == "Solid" && geom.contains("lod") && geom["lod"] == "2.2") { // introduced The lod field check
           // shell → surface → ring → vertex indices structure
           for (size_t shell_id = 0; shell_id < geom["boundaries"].size(); shell_id++) {
             auto& shell = geom["boundaries"][shell_id];
@@ -310,20 +310,41 @@ void triangulate_surfaces(json& j) {
                 Point_2 b = face->vertex(1)->point();
                 Point_2 c = face->vertex(2)->point();
 
-                auto ita = point_to_index.find(a);
-                auto itb = point_to_index.find(b);
-                auto itc = point_to_index.find(c);
+                // edit started
 
-                if (ita == point_to_index.end() ||
-                    itb == point_to_index.end() ||
-                    itc == point_to_index.end()) {
-                  std::cerr << "Warning: triangle vertex not found in point_to_index map" << std::endl;
-                  continue;
+                // Helper lambda: find the closest original vertex index for a CDT point.
+                // Handles Steiner points (CDT-inserted vertices not in the original ring)
+                // by snapping to the nearest original vertex by 3D distance.
+                auto find_closest_index = [&](const Point_2& p2) -> int {
+                    Point_3 p3 = best_plane.to_3d(p2);
+                    int best_idx = -1;
+                    double best_dist_sq = std::numeric_limits<double>::max();
+                    for (size_t ring_id = 0; ring_id < surface_indices.size(); ring_id++) {
+                        for (size_t pt_id = 0; pt_id < surface_indices[ring_id].size(); pt_id++) {
+                            const Point_3& candidate = surface_points_3d[ring_id][pt_id];
+                            double dx = p3.x() - candidate.x();
+                            double dy = p3.y() - candidate.y();
+                            double dz = p3.z() - candidate.z();
+                            double dist_sq = dx*dx + dy*dy + dz*dz;
+                            if (dist_sq < best_dist_sq) {
+                                best_dist_sq = dist_sq;
+                                best_idx = surface_indices[ring_id][pt_id];
+                            }
+                        }
                     }
+                    return best_idx;
+                };
 
-                int ia = ita->second;
-                int ib = itb->second;
-                int ic = itc->second;
+                int ia = find_closest_index(a);
+                int ib = find_closest_index(b);
+                int ic = find_closest_index(c);
+
+                if (ia < 0 || ib < 0 || ic < 0) {
+                    std::cerr << "Warning: could not map triangle vertex to original index. Skipping triangle." << std::endl;
+                    continue;
+                }
+
+                // edit ended
 
                 double triangle_area = signed_area_triangle_2d(a, b, c);
 
