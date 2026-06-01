@@ -75,3 +75,6 @@ Testing/
 
 
 .idea/
+
+.*vscode/
+data/
