@@ -15,7 +15,7 @@
     │   └── roof_area.h        Per-building RoofSurface area
     └── src/                   ~Implementations~
         ├── main.cpp           orchestrates the pipeline
-        ├── io.cpp             \\ unused
+        ├── io.cpp             // unused
         ├── triangulate.cpp
         ├── volume.cpp
         ├── lod_filter.cpp
