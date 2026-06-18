@@ -1,14 +1,16 @@
-# GEO1004 HW2 — 3D City Model Processing
-
-Arda Baysal – 5484987  
-Daman Dogra – 6407196  
-Tejas Ziegler – 6575498
-
+# 3D City Model Processing
 A C++ pipeline that processes tiles from the [3DBAG](https://3dbag.nl) dataset.
 Given a CityJSON tile, the programme filters to LoD2.2, merges BuildingParts into
 their parent Building, triangulates all surfaces, and computes two new per-building
 attributes: enclosed volume (`geo1004_volume`) and total roof area
-(`geo1004_total_roof_area`).
+(`geo1004_total_roof_area`). and validates the attributes with synthetically generated 3D City models.
+
+
+
+#### Contributors:
+1. Arda Baysal  
+2. Daman Dogra  
+3. Tejas Ziegler
 
 ## Repository structure
 
